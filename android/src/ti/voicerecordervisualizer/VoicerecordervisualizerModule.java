@@ -8,58 +8,65 @@
  */
 package ti.voicerecordervisualizer;
 
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.annotations.Kroll;
-
 import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 
+import com.tyorikan.voicerecordingvisualizer.RecordingSampler;
 
-@Kroll.module(name="Voicerecordervisualizer", id="ti.voicerecordervisualizer")
-public class VoicerecordervisualizerModule extends KrollModule
-{
+@Kroll.module(name = "Voicerecordervisualizer", id = "ti.voicerecordervisualizer")
+public class VoicerecordervisualizerModule extends KrollModule implements
+		RecordingSampler.CalculateVolumeListener {
 
 	// Standard Debugging variables
 	private static final String LCAT = "VoicerecordervisualizerModule";
-	private static final boolean DBG = TiConfig.LOGD;
+	RecordingSampler recordingSampler;
+	private int interval = 120;
 
 	// You can define constants with @Kroll.constant, for example:
 	// @Kroll.constant public static final String EXTERNAL_NAME = value;
 
-	public VoicerecordervisualizerModule()
-	{
+	public VoicerecordervisualizerModule() {
 		super();
 	}
 
 	@Kroll.onAppCreate
-	public static void onAppCreate(TiApplication app)
-	{
+	public static void onAppCreate(TiApplication app) {
 		Log.d(LCAT, "inside onAppCreate");
-		// put module init code that needs to run when the application is created
+		// put module init code that needs to run when the application is
+		// created
 	}
 
 	// Methods
 	@Kroll.method
-	public String example()
-	{
-		Log.d(LCAT, "example called");
-		return "hello world";
+	public void init(KrollDict opts) {
+		if (opts.containsKeyAndNotNull("interval"))
+			interval = opts.getInt("interval");
+		recordingSampler = new RecordingSampler();
+		recordingSampler.setVolumeListener(this);
+		recordingSampler.setSamplingInterval(interval);
 	}
 
-	// Properties
-	@Kroll.getProperty
-	public String getExampleProp()
-	{
-		Log.d(LCAT, "get example property");
-		return "hello world";
+	@Kroll.method
+	public void link(Object obj) {
+		if (obj instanceof ViewProxy) {
+			ViewProxy proxy = (ViewProxy) obj;
+			recordingSampler.link(proxy.getView());
+		}
+		if (opts.containsKeyAndNotNull("interval"))
+			interval = opts.getInt("interval");
+		recordingSampler = new RecordingSampler();
+		recordingSampler.setVolumeListener(this);
+		recordingSampler.setSamplingInterval(interval);
 	}
 
+	@Override
+	public void onCalculateVolume(int volume) {
+		// TODO Auto-generated method stub
 
-	@Kroll.setProperty
-	public void setExampleProp(String value) {
-		Log.d(LCAT, "set example property: " + value);
 	}
 
 }
-
