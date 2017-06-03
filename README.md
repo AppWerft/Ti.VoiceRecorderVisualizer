@@ -26,8 +26,8 @@ Sampler.init({
 
 var RenderView = Sampler.createRenderView({
 	color : "red",
-	range : Visualizer.RENDERANGE_BOTTOM,
-	types : [Visualizer.RENDERTYPE_BAR,Visualizer.RENDERTYPE_FADE],
+	range : Sampler.RENDERANGE_BOTTOM,
+	types : Sampler.RENDERTYPE_BAR | Sampler.RENDERTYPE_FADE,
 	columns : 10
 })
 window.add(RenderView);
